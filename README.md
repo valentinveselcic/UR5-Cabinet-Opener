@@ -174,13 +174,13 @@ pip install numpy transformations
 
 ## Installation & Build
 
-### 1. Clone into ROS 2 Workspace
+### 1. Clone the workspace
 
 ```bash
 git clone https://github.com/valentinveselcic/UR5-Cabinet-Opener.git
 ```
 
-### 2. Build the Workspace
+### 2. Build the workspace
 
 ```bash
 cd ~/UR5-Cabinet-Opener
