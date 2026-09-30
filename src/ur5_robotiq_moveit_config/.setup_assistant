@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: ur5_robotiq_sim
+    relative_path: urdf/ur_gz.xacro
+  srdf:
+    relative_path: config/ur5_robotiq_3f.srdf
+  package_settings:
+    author_name: VS
+    author_email: vs@ferit.hr
+    generated_timestamp: 1763668402
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

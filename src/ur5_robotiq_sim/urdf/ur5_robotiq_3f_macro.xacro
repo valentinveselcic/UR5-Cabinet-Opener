@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ========================================================== -->
+  <!--  Main macro: UR5 + Robotiq 3F (simulation OR real robot)  -->
+  <!-- ========================================================== -->
+  <xacro:macro name="ur5_robotiq_3f" params="
+      prefix:=''
+      name:='ur5'
+      tf_prefix:=''
+      use_sim:='true'
+      robot_ip:='0.0.0.0'
+      joint_limit_params:='$(find ur_description)/config/ur5/joint_limits.yaml'
+      kinematics_params:='$(find ur_description)/config/ur5/default_kinematics.yaml'
+      physical_params:='$(find ur_description)/config/ur5/physical_parameters.yaml'
+      visual_params:='$(find ur_description)/config/ur5/visual_parameters.yaml'
+      safety_limits:='true'
+      safety_pos_margin:='0.15'
+      safety_k_position:='20'
+      force_abs_paths:='false'
+    ">
+
+    <!-- Root world link -->
+    <link name="${prefix}world"/>
+
+    <!-- Include dependencies -->
+    <xacro:include filename="$(find robotiq_description)/urdf/robotiq_3f_gripper_articulated_macro.xacro"/>
+    <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+    <xacro:include filename="$(find ur_robot_driver)/urdf/ur.ros2_control.xacro"/>
+
+    <!-- Instantiate the UR5 robot -->
+    <xacro:ur_robot
+        name="${name}"
+        tf_prefix="${tf_prefix}"
+        parent="${prefix}world"
+        joint_limits_parameters_file="${joint_limit_params}"
+        kinematics_parameters_file="${kinematics_params}"
+        physical_parameters_file="${physical_params}"
+        visual_parameters_file="${visual_params}"
+        safety_limits="${safety_limits}"
+        safety_pos_margin="${safety_pos_margin}"
+        safety_k_position="${safety_k_position}"
+        force_abs_paths="${force_abs_paths}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:ur_robot>
+
+    <!-- Robotiq gripper -->
+    <xacro:robotiq_3f_gripper_articulated prefix="rq_"/>
+
+    <!-- Attach gripper to tool0 -->
+    <joint name="${prefix}gripper_tool0_joint" type="fixed">
+      <parent link="tool0"/>
+      <child link="rq_palm"/>
+      <origin xyz="0 0 0.0535" rpy="${-pi/2} ${-pi} ${-pi/4}"/>
+    </joint>
+
+    <!-- ========================================================== -->
+    <!--             SIMULATION ros2_control BLOCK                  -->
+    <!-- ========================================================== -->
+    <xacro:if value="${use_sim}">
+      <xacro:ur_ros2_control
+        name="${name}_sim_control"
+        tf_prefix="${tf_prefix}"
+        kinematics_parameters_file="${kinematics_params}"
+        robot_ip="0.0.0.0"
+        script_filename=""
+        input_recipe_filename=""
+        output_recipe_filename=""
+        use_mock_hardware="true"
+        mock_sensor_commands="false"
+      />
+
+      <!-- Gazebo plugin -->
+      <gazebo>
+        <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so"/>
+      </gazebo>
+    </xacro:if>
+
+    <!-- ========================================================== -->
+    <!--               REAL ROBOT ros2_control BLOCK                -->
+    <!-- ========================================================== -->
+    <xacro:unless value="${use_sim}">
+      <xacro:ur_ros2_control
+        name="${name}_hw_control"
+        tf_prefix="${tf_prefix}"
+        kinematics_parameters_file="${kinematics_params}"
+        robot_ip="${robot_ip}"
+        script_filename="$(find ur_robot_driver)/resources/ros_control.urscript"
+        input_recipe_filename="$(find ur_robot_driver)/resources/rtde_input_recipe.yaml"
+        output_recipe_filename="$(find ur_robot_driver)/resources/rtde_output_recipe.yaml"
+        use_mock_hardware="false"
+      />
+    </xacro:unless>
+
+  </xacro:macro>
+
+</robot>
