@@ -177,15 +177,13 @@ pip install numpy transformations
 ### 1. Clone into ROS 2 Workspace
 
 ```bash
-mkdir -p ~/ros2_ws/src
-cd ~/ros2_ws/src
-git clone https://github.com/your-username/ur5-cabinet-manipulator.git ur5_robotiq_sim
+git clone https://github.com/valentinveselcic/UR5-Cabinet-Opener.git
 ```
 
 ### 2. Build the Workspace
 
 ```bash
-cd ~/ros2_ws
+cd ~/UR5-Cabinet-Opener
 colcon build --symlink-install
 source install/setup.bash
 ```
