@@ -46,15 +46,20 @@ The cabinet kinematics are parameterized using homogeneous transformation matric
 1. **World to Cabinet Origin:** $T_{O}^{W}$ maps the spawned position ($x=0.0$, $y=0.15$, $z=0.998$) and yaw orientation ($\psi = -1.57 \text{ rad}$).
 2. **Hinge Joint Rotation:** For each displacement angle $\theta \in [\theta_{\text{start}}, \theta_{\text{target}}]$, the hinge transformation is updated via:
 
-   $$
-   R_z(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 & 0 \\ \sin\theta & \cos\theta & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix}
-   $$
+```math
+R_z(\theta) = \begin{bmatrix}
+\cos\theta & -\sin\theta & 0 & 0 \\
+\sin\theta & \cos\theta & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+```
 
-3. **Forward Kinematic Chain:** The target grasp pose in world coordinates $T_{G}^{W}$ is computed dynamically along the arc:
+4. **Forward Kinematic Chain:** The target grasp pose in world coordinates $T_{G}^{W}$ is computed dynamically along the arc:
 
-   $$
-   T_{G}^{W} = T_{O}^{W} \cdot T_{A}^{O} \cdot R_z(\theta) \cdot T_{D}^{A} \cdot T_{G}^{D}
-   $$
+$$
+T_{G}^{W} = T_{O}^{W} \cdot T_{A}^{O} \cdot R_z(\theta) \cdot T_{D}^{A} \cdot T_{G}^{D}
+$$
 
    where $T_{G}^{D}$ defines an approach vector positioned behind the door panel with a $-45^\circ$ approach angle offset for stable contact during pulling.
 
